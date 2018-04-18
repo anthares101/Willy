@@ -12,7 +12,7 @@
 ;==========================================
 (defmodule myMAIN (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (export deftemplate ?ALL))
 
-(deftemplate MAIN::casilla
+(deftemplate casilla
 	(slot x)
 	(slot y)
 	(slot visited (default 0))
@@ -22,7 +22,7 @@
 	(slot pull)
 	(slot noise)
 )
-(deftemplate MAIN::willy
+(deftemplate willy
 	(slot x)
 	(slot y)
 )

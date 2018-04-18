@@ -4,34 +4,42 @@
 ;  - Fecha: mejoras/cambios
 ;*****************************************
 
-(defrule MAIN::passToMyMAIN
+(defrule MAIN::passToPercepcion
 	=>
-	(focus myMAIN))
+	(focus Percepcion))
 
 
 ;==========================================
-(defmodule myMAIN (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (export deftemplate ?ALL))
+;Modulo de Percepcion, se observan las casillas circundantes
 
-(deftemplate casilla
-	(slot x)
-	(slot y)
-	(slot visited (default 0))
-	(slot safe (default 0))
-	(slot alien (default 0))
-	(slot hole (default 0))
-	(slot pull)
-	(slot noise)
+(defmodule Percepcion (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (export deftemplate ?ALL))
+
+(deftemplate casilla					;Informacion casillas (1=true 0=false)
+	(slot x)								;Posicion x de la casilla
+	(slot y)								;Posicion y de la casilla
+	(slot visited (default 0))		;Casilla visitada
+	(slot safe (default 0))			;La casilla es totalmente segura
+	(slot alien (default 0))		;Hay alien en la casilla
+	(slot hole (default 0))			;Hay agujero en la casilla
+	(slot pull)							;Se percibe empuje
+	(slot noise)						;Se percibe sonido
+	(slot danger)						;La casilla tiene un peligro seguro sin especificar cual
 )
 (deftemplate willy
 	(slot x)
 	(slot y)
 )
+
+
 (defrule firstState
-	(not (casilla (x ?)(y ?) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?)))
+	(not (casilla (x ?)(y ?) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 =>
-	(assert (casilla (x 0)(y 0) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 0)))
+	(assert (casilla (x 0)(y 0) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 0) (danger 0)))
 	(assert (willy (x 0) (y 0)))
 )
+
+;----------------------------------------------------------------------------
+;Se traducen las direcciones a valores numericos para operar con coordenadas
 
 (defrule direction
 	(directions $? ?direction $?)
@@ -66,17 +74,35 @@
 	(retract ?h1)
 	(assert (x -1))
 )
+;-----------------------------------------------------------------------------
+
+
+;Cambio de modulo
+(defrule passToInferencia
+	(declare(salience -10))
+=>
+	(focus Inferencia))
+
 ;=====================================
-; Se pueden crear otros módulos (siempre que lo acepte el programa) con el contenido que se desee
-; Se deben especificar las indicaciones de importación y exportación que deseeis, pero se sugiere importar todo de MAIN y de vuestro myMAIN
-; Ejemplo:
-(defmodule Modulo1 (import MAIN deftemplate ?ALL) (import myMAIN deftemplate ?ALL))
+;Se infieren con los datos obtenidos informacion de las casillas
 
-; Se puede crear cualquier constructor que deseis y que lo acepte el programa (funciones, plantillas, reglas...)
+(defmodule Inferencia (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
 
-
+;Cambio de modulo
+(defrule passToMovimiento
+	(declare(salience -10))
+=>
+	(focus Movimiento))
 
 
 
 ;=========================================
-; Otros módulos (tantos como se deseen)
+;Willy se desplaza
+
+(defmodule Movimiento (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
+
+;Cambio de modulo
+(defrule passToPercepcion
+	(declare(salience -10))
+=>
+	(focus Percepcion))

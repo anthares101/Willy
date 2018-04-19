@@ -3,10 +3,31 @@
 ; Historial de cambios:
 ;  - Fecha: mejoras/cambios
 ;*****************************************
+(defrule MAIN::passToInicialRule
+	=>
+	(assert (next_modulo Percepcion))
+	(focus Percepcion))
 
 (defrule MAIN::passToPercepcion
+	?h <- (next_modulo Percepcion)
 	=>
+	(retract ?h)
+	(assert (next_modulo Inferencia))
 	(focus Percepcion))
+	
+(defrule MAIN::passToInferencia
+	?h <- (next_modulo Inferencia)
+	=>
+	(retract ?h)
+	(assert (next_modulo Movimiento))
+	(focus Inferencia))
+	
+(defrule MAIN::passToMovimiento
+	?h <- (next_modulo Movimiento)
+	=>
+	(retract ?h)
+	(assert (next_modulo Percepcion))
+	(focus Movimiento))
 
 
 ;==========================================
@@ -78,10 +99,11 @@
 
 
 ;Cambio de modulo
-(defrule passToInferencia
+(defrule exitModule
 	(declare(salience -10))
 =>
-	(focus Inferencia))
+	(return)
+)
 
 ;=====================================
 ;Se infieren con los datos obtenidos informacion de las casillas
@@ -89,10 +111,11 @@
 (defmodule Inferencia (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
 
 ;Cambio de modulo
-(defrule passToMovimiento
+(defrule exitModule
 	(declare(salience -10))
 =>
-	(focus Movimiento))
+	(return)
+)
 
 
 
@@ -102,7 +125,8 @@
 (defmodule Movimiento (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
 
 ;Cambio de modulo
-(defrule passToPercepcion
+(defrule exitModule
 	(declare(salience -10))
 =>
-	(focus Percepcion))
+	(return)
+)

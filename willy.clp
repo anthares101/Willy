@@ -61,14 +61,15 @@
 
 (defrule actualState
 	(willy (x ?x) (y ?y))
-	?h<-(casilla (x ?x) (y ?y) (visited 0) (safe ?) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d))
+	?h1<-(casilla (x ?x) (y ?y) (visited 0) (safe ?) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d))
 =>
-	(retract ?h) 
+	(retract ?h1) 
 	(assert (casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d)))
 )
 
 ;----------------------------------------------------------------------------
 ;Crea las casillas circundantes si no existen
+
 (defrule surroundingsX
 	(willy (x ?x) (y ?y))
 	(x ?mX)
@@ -86,14 +87,15 @@
 )
 
 ;----------------------------------------------------------------------------
-;Deteccion de peligros
+;Deteccion de peligros casilla actual
+
 (defrule detectNoise
 	(declare (salience 1))
 	(willy (x ?x) (y ?y))
 	(percepts ?$ Noise ?$)
-	?h<-(casilla (x ?x) (y ?y) (visited 0) (safe ?s) (alien ?a) (hole ?h) (pull ?p) (noise 0) (danger ?d))
+	?h1<-(casilla (x ?x) (y ?y) (visited 0) (safe ?s) (alien ?a) (hole ?h) (pull ?p) (noise 0) (danger ?d))
 =>
-	(retract ?h)
+	(retract ?h1)
 	(assert (casilla (x ?x) (y ?y) (visited 0) (safe ?s) (alien ?a) (hole ?h) (pull ?p) (noise 1) (danger ?d)))
 )
 
@@ -101,30 +103,36 @@
 	(declare (salience 1))
 	(willy (x ?x) (y ?y))
 	(percepts ?$ Pull ?$)
-	?h<-(casilla (x ?x) (y ?y) (visited 0) (safe ?s) (alien ?a) (hole ?h) (pull 0) (noise ?n) (danger ?d))
+	?h1<-(casilla (x ?x) (y ?y) (visited 0) (safe ?s) (alien ?a) (hole ?h) (pull 0) (noise ?n) (danger ?d))
 =>
-	(retract ?h)
+	(retract ?h1)
 	(assert (casilla (x ?x) (y ?y) (visited 0) (safe ?s) (alien ?a) (hole ?h) (pull 1) (noise ?n) (danger ?d)))
 )
+
 ;----------------------------------------------------------------------------
+;Determina si las casillas de alrededor son seguras
 
-;(defrule lookAroundX_pull
-;	(declare (salience -1))
-;	(willy (x ?x) (y ?y))
-;	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull 1) (noise ?) (danger ?))
-;	(x ?mX)
-;	?h<-(casilla (x =(+ ?mX ?x)) (y ?y) (visited ?v) (safe 0) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d))
-;=>
-;	(retract ?h)
-;)
+(defrule lookAroundX
+	(declare (salience -1))
+	(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull 0) (noise 0) (danger ?))
+	(x ?mX)
+	?h1<-(casilla (x =(+ ?mX ?x)) (y ?y) (visited ?v) (safe 0) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d))
+=>
+	(retract ?h1)
+	(assert(casilla (x =(+ ?mX ?x)) (y ?y) (visited ?v) (safe 1) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d)))
+)
 
-;(defrule lookAroundY_pull
-;	(declare (salience -1))
-;	(willy (x ?x) (y ?y))
-;	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull 1) (noise ?) (danger ?))
-;	(y ?mX)
-;	?h<-(casilla (x (+ ?mX ?x)) (y ?y) (visited ?) (safe 0) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
-;)
+(defrule lookAroundY
+	(declare (salience -1))
+	(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull 0) (noise 0) (danger ?))
+	(y ?mY)
+	?h1<-(casilla (x ?x) (y =(+ ?mY ?y)) (visited ?v) (safe 0) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d))
+=>
+	(retract ?h1)
+	(assert(casilla (x ?x) (y =(+ ?mY ?y)) (visited ?v) (safe 1) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d)))
+)
 
 ;----------------------------------------------------------------------------
 ;Se traducen las direcciones a valores numericos para operar con coordenadas
@@ -166,6 +174,7 @@
 
 
 ;Cambio de modulo
+
 (defrule exitModule
 	(declare(salience -10))
 =>
@@ -191,9 +200,21 @@
 
 (defmodule Movimiento (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
 
+(defrule movTest
+	?h1<-(willy (x ?x) (y ?y))
+	(not(movido))
+=>
+	(retract ?h1)
+	(moveWilly east)
+	(assert(willy (x (+ ?x 1)) (y ?y)))
+	(assert (movido))
+)
+
 ;Cambio de modulo
 (defrule exitModule
 	(declare(salience -10))
+	?h1<-(movido)
 =>
+	(retract ?h1)
 	(return)
 )

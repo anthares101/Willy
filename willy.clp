@@ -185,6 +185,133 @@
 
 (defmodule Inferencia (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
 
+;Willy se deberia encontrar justo a la derecha del alien
+(defrule infer-alien-right
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
+	(casilla (x =(- ?x 2))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla dos posiciones a la izquierda en la que ha estado Willy
+	=>
+	(assert (casilla (x =(- ?x 1))(y ?y)(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al alien
+	(assert (alien detected (- ?x 1) ?y))
+)
+
+;Willy se deberia encontrar justo a la izquierda del alien
+(defrule infer-alien-left
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
+	(casilla (x =(+ ?x 2))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla dos posiciones a la derecha en la que ha estado Willy
+	=>
+	(assert (casilla (x (+ ?x 1))(y ?y)(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al alien
+	(assert (alien detected (+ ?x 1) ?y))
+)
+
+;Willy se deberia encontrar justo encima del alien
+(defrule infer-alien-up
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
+	(casilla (x ?x)(y =(- ?y 2))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla dos posiciones abajo en la que ha estado Willy
+	=>
+	(assert (casilla (x ?x)(y =(- ?y 1))(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al alien
+	(assert (alien detected ?x (- ?y 2)))
+)
+
+;Willy se deberia encontrar justo debajo del alien
+(defrule infer-alien-down
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
+	(casilla (x ?x)(y =(+ ?y 2))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla dos posiciones arriba en la que ha estado Willy
+	=>
+	(assert (casilla (x ?x)(y =(+ ?y 1))(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al alien
+	(assert (alien detected ?x (+ ?y 1)))
+)
+
+;detectar al alien desde dos lados en diagonal
+
+(defrule infer-alien-up-left
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta encima del alien
+	(casilla (x =(- ?x 1))(y =(- ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta a la izquierda del alien
+	(casilla (x =(- ?x 1))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal superior izquierda del alien
+	=>
+	(assert (casilla (x ?x)(y =(- ?y 1))(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1)))
+	(assert (alien detected))
+)
+
+(defrule infer-alien-down-left
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta a la izquierda del alien
+	(casilla (x =(+ ?x 1))(y =(- ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta debajo del alien
+	(casilla (x ?x)(y =(- ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal inferior izquierda del alien
+	=>
+	(assert (casilla (x =(+ ?x 1))(y ?y)(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1)))
+	(assert (alien detected))
+)
+
+(defrule infer-alien-down-right
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta debajo del alien
+	(casilla (x =(+ ?x 1))(y =(+ ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta a la derecha del alien
+	(casilla (x =(+ ?x 1))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal inferior derecha del alien
+	=>
+	(assert (casilla (x ?x)(y =(+ ?y 1))(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1)))
+	(assert (alien detected))
+)
+
+(defrule infer-alien-up-right
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta a la derecha del alien
+	(casilla (x =(- ?x 1))(y =(+ ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta encima del alien
+	(casilla (x ?x)(y =(+ ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal superior derecha del alien
+	=>
+	(assert (casilla (x =(- ?x 1))(y ?y)(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1)))
+	(assert (alien detected))
+) 
+
+;Una vez detectado el alien, podemos dispararle
+
+
+;Willy se deberia encontrar justo a la derecha del agujero
+(defrule infer-hole-right
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
+	(casilla (x =(- ?x 2))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise ?) (danger 0)) ;casilla dos posiciones a la izquierda en la que ha estado Willy
+	=>
+	(assert (casilla (x =(- ?x 1))(y ?y)(visited 0) (safe 0) (alien 0) (hole 1) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al agujero
+	(assert (hole detected (- ?x 1) ?y))
+)
+
+;Willy se deberia encontrar justo a la izquierda del agujero
+(defrule infer-hole-left
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
+	(casilla (x =(+ ?x 2))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla dos posiciones a la derecha en la que ha estado Willy
+	=>
+	(assert (casilla (x =(+ ?x 1))(y ?y)(visited 0) (safe 0) (alien 0) (hole 1) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al agujero
+	(assert (hole detected (+ ?x 1) ?y))
+)
+
+;Willy se deberia encontrar justo encima del agujero
+(defrule infer-hole-up
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
+	(casilla (x ?x)(y =(- ?y 2))(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla dos posiciones abajo en la que ha estado Willy
+	=>
+	(assert (casilla (x ?x)(y =(- ?y 1))(visited 0) (safe 0) (alien 0) (hole 1) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al agujero
+	(assert (hole detected ?x (- ?y 2)))
+)
+
+;Willy se deberia encontrar justo debajo del agujero
+(defrule infer-hole-down
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
+	(casilla (x ?x)(y =(+ ?y 2))(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla dos posiciones arriba en la que ha estado Willy
+	=>
+	(assert (casilla (x ?x)(y =(+ ?y 1))(visited 0) (safe 0) (alien 0) (hole 1) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al agujero
+	(assert (hole detected ?x (+ ?y 1)))
+)
+
+;es facil poner como seguras las casillas que podrian haber contenido un alien, porque solo hay
+;pero con los agujeros no se puede tan facilmente, habria que pensar si merece la pena poner casillas como seguras 
+;o solo tener controladas las casillas donde haya agujeros (piensa en el caso en el que haya dos agujeros juntos y detecto uno 
+;de ellos, no puedo poner las casillas a su alrededor como seguras porque en una hay un puto agujero xddddd
+;lo mejor creo yo es tenerlos controlados donde estan y evitarlos a toda costa
+
+;(defrule discard-hole
+;	
+;)
+
+;(defrule discard-alien
+;
+;)
+
 ;Cambio de modulo
 (defrule exitModule
 	(declare(salience -10))
@@ -206,6 +333,30 @@
 	(retract ?h1)
 	(moveWilly east)
 	(assert(willy (x (+ ?x 1)) (y ?y)))
+	(assert (movido))
+)
+
+;test para probar la inferencia del alien
+
+(defrule movTest2
+	?h<-(willy (x 7) (y ?y))
+	(not (movido))
+	=>
+	(retract ?h)
+	(moveWilly north)
+	(assert(willy (x 7) (y (+ ?y 1))))
+	(assert (movido))
+	(assert (sergio))
+)
+
+(defrule movTest2-1
+	?h<-(willy (x ?x) (y ?y))
+	?h1<-(sergio)
+	(not (movido))
+	=>
+	(retract ?h ?h1)
+	(moveWilly east)
+	(assert (willy (x (+ ?x 1)) (y ?y)))
 	(assert (movido))
 )
 

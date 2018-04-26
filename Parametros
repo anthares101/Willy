@@ -1,2 +1,2 @@
--maps maps_validation 
--interactive
+java -Djava.library.path=. -jar WillyDemo.jar -maps maps_validation 
+java -Djava.library.path=. -jar WillyDemo.jar -interactive

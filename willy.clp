@@ -92,7 +92,7 @@
 (defrule detectNoise
 	(declare (salience 1))
 	(willy (x ?x) (y ?y))
-	(percepts ?$ Noise ?$)
+	(or (percepts Noise) (percepts Pull Noise) (percepts Noise Pull))
 	?h1<-(casilla (x ?x) (y ?y) (visited 0) (safe ?s) (alien ?a) (hole ?h) (pull ?p) (noise 0) (danger ?d))
 =>
 	(retract ?h1)
@@ -102,7 +102,7 @@
 (defrule detectPull
 	(declare (salience 1))
 	(willy (x ?x) (y ?y))
-	(percepts ?$ Pull ?$)
+	(or (percepts Pull) (percepts Pull Noise) (percepts Noise Pull))
 	?h1<-(casilla (x ?x) (y ?y) (visited 0) (safe ?s) (alien ?a) (hole ?h) (pull 0) (noise ?n) (danger ?d))
 =>
 	(retract ?h1)

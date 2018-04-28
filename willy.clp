@@ -291,7 +291,6 @@
 ;-----------------------------------------------------------------------------
 ;Dispara cuando sabe donde esta el alien
 (defrule shootNorth
-	(declare(salience 10))
 	(hasLaser)
 	?h<-(alien detected ?x ?y)
 	(willy (x ?x) (y ?z))
@@ -303,7 +302,6 @@
 )
 
 (defrule shootEast
-	(declare(salience 10))
 	(hasLaser)
 	?h<-(alien detected ?x ?y)
 	(willy (x ?z) (y ?y))
@@ -315,7 +313,6 @@
 )
 
 (defrule shootWest
-	(declare(salience 10))
 	(hasLaser)
 	?h<-(alien detected ?x ?y)
 	(willy (x ?z) (y ?y))
@@ -327,7 +324,6 @@
 )
 
 (defrule shootSouth
-	(declare(salience 10))
 	(hasLaser)
 	?h<-(alien detected ?x ?y)
 	(willy (x ?x) (y ?z))
@@ -344,7 +340,10 @@
 (defmodule Movimiento (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
 
 ;-----------------------------------------------------------------------------
-(defrule movTest
+;test para probar la inferencia del alien
+
+(defrule movTest1
+	(declare (salience 1))
 	?h1<-(willy (x ?x) (y ?y))
 	(not(movido))
 =>
@@ -354,31 +353,38 @@
 	(assert (movido))
 )
 
-;-----------------------------------------------------------------------------
-;test para probar la inferencia del alien
-
 (defrule movTest2
-	?h<-(willy (x 7) (y ?y))
-	(not (movido))
-	=>
-	(retract ?h)
+	(declare (salience 2))
+	?h1<-(willy (x 7) (y ?y))
+	(not(movido))
+=>
+	(retract ?h1)
 	(moveWilly north)
 	(assert(willy (x 7) (y (+ ?y 1))))
 	(assert (movido))
-	(assert (sergio))
 )
 
-(defrule movTest2-1
-	?h<-(willy (x ?x) (y ?y))
-	?h1<-(sergio)
-	(not (movido))
-	=>
-	(retract ?h ?h1)
+(defrule movTest3
+	(declare (salience 3))
+	?h1<-(willy (x ?x) (y 2))
+	(not(movido))
+=>
+	(retract ?h1)
 	(moveWilly east)
-	(assert (willy (x (+ ?x 1)) (y ?y)))
+	(assert(willy (x (+ ?x 1)) (y 2)))
 	(assert (movido))
 )
 
+(defrule movTest4
+	(declare (salience 4))
+	?h1<-(willy (x 9) (y ?y))
+	(not(movido))
+=>
+	(retract ?h1)
+	(moveWilly south)
+	(assert(willy (x 9) (y (- ?y 1))))
+	(assert (movido))
+)
 ;-----------------------------------------------------------------------------
 ;Cambio de modulo
 (defrule exitModule

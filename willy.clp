@@ -288,13 +288,62 @@
 	(return)
 )
 
+;-----------------------------------------------------------------------------
+;Dispara cuando sabe donde esta el alien
+(defrule shootNorth
+	(declare(salience 10))
+	(hasLaser)
+	?h<-(alien detected ?x ?y)
+	(willy (x ?x) (y ?z))
+	(test (> ?y ?z))
+=>
+	(fireLaser north)
+	(retract ?h)
+	(assert (deadAlien))
+)
 
+(defrule shootEast
+	(declare(salience 10))
+	(hasLaser)
+	?h<-(alien detected ?x ?y)
+	(willy (x ?z) (y ?y))
+	(test (> ?x ?z))
+=>
+	(fireLaser east)
+	(retract ?h)
+	(assert (deadAlien))
+)
+
+(defrule shootWest
+	(declare(salience 10))
+	(hasLaser)
+	?h<-(alien detected ?x ?y)
+	(willy (x ?z) (y ?y))
+	(test (< ?x ?z))
+=>
+	(fireLaser west)
+	(retract ?h)
+	(assert (deadAlien))
+)
+
+(defrule shootSouth
+	(declare(salience 10))
+	(hasLaser)
+	?h<-(alien detected ?x ?y)
+	(willy (x ?x) (y ?z))
+	(test (< ?y ?z))
+=>
+	(fireLaser south)
+	;(retract ?h)
+	(assert (deadAlien))
+)
 
 ;=========================================
 ;Willy se desplaza
 
 (defmodule Movimiento (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
 
+;-----------------------------------------------------------------------------
 (defrule movTest
 	?h1<-(willy (x ?x) (y ?y))
 	(not(movido))
@@ -305,6 +354,7 @@
 	(assert (movido))
 )
 
+;-----------------------------------------------------------------------------
 ;test para probar la inferencia del alien
 
 (defrule movTest2
@@ -329,6 +379,7 @@
 	(assert (movido))
 )
 
+;-----------------------------------------------------------------------------
 ;Cambio de modulo
 (defrule exitModule
 	(declare(salience -10))

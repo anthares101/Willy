@@ -229,7 +229,7 @@
 	(casilla (x =(- ?x 1))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal superior izquierda del alien
 	=>
 	(assert (casilla (x ?x)(y =(- ?y 1))(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1)))
-	(assert (alien detected))
+	(assert (alien detected ?x (- ?y 1)))
 )
 
 (defrule infer-alien-down-left
@@ -238,7 +238,7 @@
 	(casilla (x ?x)(y =(- ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal inferior izquierda del alien
 	=>
 	(assert (casilla (x =(+ ?x 1))(y ?y)(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1)))
-	(assert (alien detected))
+	(assert (alien detected (+ ?x 1) ?y))
 )
 
 (defrule infer-alien-down-right
@@ -247,7 +247,7 @@
 	(casilla (x =(+ ?x 1))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal inferior derecha del alien
 	=>
 	(assert (casilla (x ?x)(y =(+ ?y 1))(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1)))
-	(assert (alien detected))
+	(assert (alien detected ?x (+ ?y 1)))
 )
 
 (defrule infer-alien-up-right
@@ -256,47 +256,16 @@
 	(casilla (x ?x)(y =(+ ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal superior derecha del alien
 	=>
 	(assert (casilla (x =(- ?x 1))(y ?y)(visited 0) (safe 0) (alien 1) (hole 0) (pull 0) (noise 0) (danger 1)))
-	(assert (alien detected))
+	(assert (alien detected (- ?x 1) ?y))
 ) 
 
 ;Una vez detectado el alien, podemos dispararle
 
 
-;Willy se deberia encontrar justo a la derecha del agujero
-(defrule infer-hole-right
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
-	(casilla (x =(- ?x 2))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise ?) (danger 0)) ;casilla dos posiciones a la izquierda en la que ha estado Willy
-	=>
-	(assert (casilla (x =(- ?x 1))(y ?y)(visited 0) (safe 0) (alien 0) (hole 1) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al agujero
-	(assert (hole detected (- ?x 1) ?y))
-)
+;inferencia del agujero negro
 
-;Willy se deberia encontrar justo a la izquierda del agujero
-(defrule infer-hole-left
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
-	(casilla (x =(+ ?x 2))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla dos posiciones a la derecha en la que ha estado Willy
-	=>
-	(assert (casilla (x =(+ ?x 1))(y ?y)(visited 0) (safe 0) (alien 0) (hole 1) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al agujero
-	(assert (hole detected (+ ?x 1) ?y))
-)
 
-;Willy se deberia encontrar justo encima del agujero
-(defrule infer-hole-up
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
-	(casilla (x ?x)(y =(- ?y 2))(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla dos posiciones abajo en la que ha estado Willy
-	=>
-	(assert (casilla (x ?x)(y =(- ?y 1))(visited 0) (safe 0) (alien 0) (hole 1) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al agujero
-	(assert (hole detected ?x (- ?y 2)))
-)
 
-;Willy se deberia encontrar justo debajo del agujero
-(defrule infer-hole-down
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
-	(casilla (x ?x)(y =(+ ?y 2))(visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0)) ;casilla dos posiciones arriba en la que ha estado Willy
-	=>
-	(assert (casilla (x ?x)(y =(+ ?y 1))(visited 0) (safe 0) (alien 0) (hole 1) (pull 0) (noise 0) (danger 1))) ;la casilla del medio tiene al agujero
-	(assert (hole detected ?x (+ ?y 1)))
-)
 
 ;es facil poner como seguras las casillas que podrian haber contenido un alien, porque solo hay
 ;pero con los agujeros no se puede tan facilmente, habria que pensar si merece la pena poner casillas como seguras 

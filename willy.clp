@@ -3,27 +3,41 @@
 ; Historial de cambios:
 ;  - Fecha: mejoras/cambios
 ;*****************************************
-(defrule MAIN::passToInicialRule
+
+(defrule MAIN::passToInicialModule
+	=>
+	(focus myMAIN))
+
+(defmodule myMAIN (import MAIN deftemplate ?ALL) (export deftemplate ?ALL))
+
+(deftemplate STOP
+	(slot state)
+)
+
+(defrule passToInicialRule
 	=>
 	(assert (next_modulo Percepcion))
-	(focus Percepcion))
+	(assert (STOP (state false))))
 
-(defrule MAIN::passToPercepcion
+(defrule passToPercepcion
 	?h <- (next_modulo Percepcion)
+	(not(STOP (state true)))
 	=>
 	(retract ?h)
 	(assert (next_modulo Inferencia))
 	(focus Percepcion))
 	
-(defrule MAIN::passToInferencia
+(defrule passToInferencia
 	?h <- (next_modulo Inferencia)
+	(not(STOP (state true)))
 	=>
 	(retract ?h)
 	(assert (next_modulo Movimiento))
 	(focus Inferencia))
 	
-(defrule MAIN::passToMovimiento
+(defrule passToMovimiento
 	?h <- (next_modulo Movimiento)
+	(not(STOP (state true)))
 	=>
 	(retract ?h)
 	(assert (next_modulo Percepcion))
@@ -50,7 +64,6 @@
 	(slot x)
 	(slot y)
 )
-
 
 (defrule firstState
 	(not (casilla (x ?)(y ?) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
@@ -169,6 +182,22 @@
 =>
 	(retract ?h1)
 	(assert (x -1))
+)
+
+;-----------------------------------------------------------------------------
+;Se limpian las direcciones almacenadas
+(defrule cleanDirX
+	(declare(salience -9))
+	?h<-(x ?)
+=>
+	(retract ?h)
+)
+
+(defrule cleanDirY
+	(declare(salience -9))
+	?h<-(y ?)
+=>
+	(retract ?h)
 )
 
 ;-----------------------------------------------------------------------------
@@ -337,54 +366,144 @@
 ;=========================================
 ;Willy se desplaza
 
-(defmodule Movimiento (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
+(defmodule Movimiento (import MAIN deftemplate ?ALL) (import myMAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
 
 ;-----------------------------------------------------------------------------
-;test para probar la inferencia del alien
+;Inicializa el vector de movimientos
 
-(defrule movTest1
-	(declare (salience 1))
+(defrule init
+	(not (moVector $?))
+=>
+	(assert (moVector))
+)
+
+;-----------------------------------------------------------------------------
+;Willy se movera hacia casillas seguras y no visitadas con prioridad max
+
+(defrule moveNorth
+	(declare (salience 2))
 	?h1<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 1) (alien 0) (hole 0) (pull ?) (noise ?) (danger 0))
+	?h2<-(moVector $?all)
 	(not(movido))
 =>
 	(retract ?h1)
+	(retract ?h2)
+	(moveWilly north)
+	(assert (moVector $?all north))
+	(assert(willy (x ?x) (y (+ ?y 1))))
+	(assert (movido))
+)
+
+(defrule moveSouth
+	(declare (salience 2))
+	?h1<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 1) (alien 0) (hole 0) (pull ?) (noise ?) (danger 0))
+	?h2<-(moVector $?all)
+	(not(movido))
+=>
+	(retract ?h1)
+	(retract ?h2)
+	(moveWilly south)
+	(assert (moVector $?all south))
+	(assert(willy (x ?x) (y (- ?y 1))))
+	(assert (movido))
+)
+
+(defrule moveEast
+	(declare (salience 2))
+	?h1<-(willy (x ?x) (y ?y))
+	(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 1) (alien 0) (hole 0) (pull ?) (noise ?) (danger 0))
+	?h2<-(moVector $?all)
+	(not(movido))
+=>
+	(retract ?h1)
+	(retract ?h2)
 	(moveWilly east)
+	(assert (moVector $?all east))
 	(assert(willy (x (+ ?x 1)) (y ?y)))
 	(assert (movido))
 )
 
-(defrule movTest2
+(defrule moveWest
 	(declare (salience 2))
-	?h1<-(willy (x 7) (y ?y))
+	?h1<-(willy (x ?x) (y ?y))
+	(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 1) (alien 0) (hole 0) (pull ?) (noise ?) (danger 0))
+	?h2<-(moVector $?all)
 	(not(movido))
 =>
 	(retract ?h1)
-	(moveWilly north)
-	(assert(willy (x 7) (y (+ ?y 1))))
+	(retract ?h2)
+	(moveWilly west)
+	(assert (moVector $?all west))
+	(assert(willy (x (- ?x 1)) (y ?y)))
 	(assert (movido))
 )
 
-(defrule movTest3
-	(declare (salience 3))
-	?h1<-(willy (x ?x) (y 2))
-	(not(movido))
-=>
-	(retract ?h1)
-	(moveWilly east)
-	(assert(willy (x (+ ?x 1)) (y 2)))
-	(assert (movido))
-)
+;-----------------------------------------------------------------------------
+;Willy se movera hacia atras por donde a venido si no sabe por donde avanzar
 
-(defrule movTest4
-	(declare (salience 4))
-	?h1<-(willy (x 9) (y ?y))
+(defrule moveBackSouth
+	?h1<-(willy (x ?x) (y ?y))
+	?h2<-(moVector $?all north)
 	(not(movido))
 =>
 	(retract ?h1)
+	(retract ?h2)
 	(moveWilly south)
-	(assert(willy (x 9) (y (- ?y 1))))
+	(assert(willy (x ?x) (y (- ?y 1))))
+	(assert (moVector $?all))
 	(assert (movido))
 )
+
+(defrule moveBackNorth
+	?h1<-(willy (x ?x) (y ?y))
+	?h2<-(moVector $?all south)
+	(not(movido))
+=>
+	(retract ?h1)
+	(retract ?h2)
+	(moveWilly north)
+	(assert(willy (x ?x) (y (+ ?y 1))))
+	(assert (moVector $?all))
+	(assert (movido))
+)
+
+(defrule moveBackEast
+	?h1<-(willy (x ?x) (y ?y))
+	?h2<-(moVector $?all west)
+	(not(movido))
+=>
+	(retract ?h1)
+	(retract ?h2)
+	(moveWilly east)
+	(assert(willy (x (+ ?x 1)) (y ?y)))
+	(assert (moVector $?all))
+	(assert (movido))
+)
+
+(defrule moveBackWest
+	?h1<-(willy (x ?x) (y ?y))
+	?h2<-(moVector $?all east)
+	(not(movido))
+=>
+	(retract ?h1)
+	(retract ?h2)
+	(moveWilly west)
+	(assert(willy (x (- ?x 1)) (y ?y)))
+	(assert (moVector $?all))
+	(assert (movido))
+)
+
+(defrule stop
+	(declare(salience -10))
+	?h<-(STOP (state false))
+	(not(movido))
+=>
+	(retract ?h)
+	(assert (STOP (state true)))
+)
+
 ;-----------------------------------------------------------------------------
 ;Cambio de modulo
 (defrule exitModule

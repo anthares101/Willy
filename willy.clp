@@ -4,9 +4,15 @@
 ;  - Fecha: mejoras/cambios
 ;*****************************************
 
+;==========================================
+;Modulo de MAIN, pasa el control del programa a myMAIN
+
 (defrule MAIN::passToInicialModule
 	=>
 	(focus myMAIN))
+	
+;==========================================
+;Modulo de myMAIN, controla la iteracion de los modulos y el fin de ejecucion
 
 (defmodule myMAIN (import MAIN deftemplate ?ALL) (export deftemplate ?ALL))
 
@@ -495,10 +501,13 @@
 	(assert (movido))
 )
 
+;-----------------------------------------------------------------------------
+;Si no hay mas casillas seguros o no visitadas disponibles se activa la señal de parada
+
 (defrule stop
-	(declare(salience -10))
+	(declare(salience -9))
 	?h<-(STOP (state false))
-	(not(movido))
+	(or (not(movido)) (not(casilla (x ?) (y ?) (visited 0) (safe 1) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))))
 =>
 	(retract ?h)
 	(assert (STOP (state true)))

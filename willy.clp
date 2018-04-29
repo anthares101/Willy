@@ -58,10 +58,10 @@
 (deftemplate casilla					;Informacion casillas (1=true 0=false)
 	(slot x)								;Posicion x de la casilla
 	(slot y)								;Posicion y de la casilla
-	(slot visited (default 0))		;Casilla visitada
-	(slot safe (default 0))			;La casilla es totalmente segura
-	(slot alien (default 0))		;Hay alien en la casilla
-	(slot hole (default 0))			;Hay agujero en la casilla
+	(slot visited)						;Casilla visitada
+	(slot safe)							;La casilla es totalmente segura
+	(slot alien)						;Hay alien en la casilla
+	(slot hole)							;Hay agujero en la casilla
 	(slot pull)							;Se percibe empuje
 	(slot noise)						;Se percibe sonido
 	(slot danger)						;La casilla tiene un peligro seguro sin especificar cual
@@ -151,6 +151,58 @@
 =>
 	(retract ?h1)
 	(assert(casilla (x ?x) (y =(+ ?mY ?y)) (visited ?v) (safe 1) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d)))
+)
+
+;----------------------------------------------------------------------------
+;Este conjunto de reglas infiere si en una casilla se esta seguro que no hay un agujero o un alien y en caso de que no haya ninguno pues será segura
+
+(defrule lookForAlienX
+	(declare (salience -2))
+	(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise 0) (danger ?))
+	(x ?mX)
+	(casilla (x =(+ ?mX ?x)) (y ?y) (visited ?v) (safe 0) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d))
+=>
+	(assert (notAlien (+ ?mX ?x) ?y))
+)
+
+(defrule lookForAlienY
+	(declare (salience -2))
+	(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise 0) (danger ?))
+	(y ?mY)
+	(casilla (x ?x) (y =(+ ?mY ?y)) (visited ?v) (safe 0) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d))
+=>
+	(assert (notAlien ?x (+ ?mY ?y)))
+)
+
+(defrule lookForHoleX
+	(declare (salience -2))
+	(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull 0) (noise ?) (danger ?))
+	(x ?mX)
+	(casilla (x =(+ ?mX ?x)) (y ?y) (visited ?v) (safe 0) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d))
+=>
+	(assert (notHole (+ ?mX ?x) ?y))
+)
+
+(defrule lookForHoleY
+	(declare (salience -2))
+	(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull 0) (noise ?) (danger ?))
+	(y ?mY)
+	(casilla (x ?x) (y =(+ ?mY ?y)) (visited ?v) (safe 0) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d))
+=>
+	(assert (notHole ?x (+ ?mY ?y)))
+)
+
+(defrule safeState
+	?h1<-(casilla (x ?x) (y ?y) (visited ?v) (safe 0) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d))
+	?h2<-(notHole ?x ?y)
+	?h3<-(notAlien ?x ?y)
+=>
+	(retract ?h1 ?h2 ?h3)
+	(assert (casilla (x ?x) (y ?y) (visited ?v) (safe 1) (alien ?a) (hole ?h) (pull ?p) (noise ?n) (danger ?d)))
 )
 
 ;----------------------------------------------------------------------------

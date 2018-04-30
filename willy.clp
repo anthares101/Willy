@@ -995,6 +995,154 @@
 	(assert (moVector))
 )
 
+(defrule killMission
+	(declare (salience 3))
+	(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull 0) (noise 1) (danger ?))
+	(not (deadAlien))
+	(not (killAlien))
+=>
+	(assert (killAlien))
+)
+
+(defrule killAlienNorth
+	(declare (salience 3))
+	?h1<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise 1) (danger ?))
+	(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 1) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	(killAlien)
+	?h2<-(moVector $?all)
+	(not (deadAlien))
+	(not (movido))
+=>
+	(retract ?h1 ?h2)
+	(moveWilly north)
+	(assert(willy (x ?x) (y (+ ?y 1))))
+	(assert (moVector $?all north))
+	(assert (moveBack))
+	(assert (movido))
+)
+
+(defrule keepSearchSouth
+	(declare (salience 4))
+	?h1<-(willy (x ?x) (y ?y))
+	?h2<-(moveBack)
+	?h3<-(moVector $?all north)
+	(killAlien)
+	(not (deadAlien))
+	(not (movido))
+=>
+	(retract ?h1 ?h2 ?h3)
+	(moveWilly south)
+	(assert(willy (x ?x) (y (- ?y 1))))
+	(assert (moVector $?all north south))
+	(assert (movido))
+)
+
+(defrule killAlienSouth
+	(declare (salience 3))
+	?h1<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise 1) (danger ?))
+	(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 1) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	(killAlien)
+	?h2<-(moVector $?all)
+	(not (deadAlien))
+	(not (movido))
+=>
+	(retract ?h1 ?h2)
+	(moveWilly south)
+	(assert(willy (x ?x) (y (- ?y 1))))
+	(assert (moVector $?all south))
+	(assert (moveBack))
+	(assert (movido))
+)
+
+(defrule keepSearchNorth
+	(declare (salience 4))
+	?h1<-(willy (x ?x) (y ?y))
+	?h2<-(moveBack)
+	?h3<-(moVector $?all south)
+	(killAlien)
+	(not (deadAlien))
+	(not (movido))
+=>
+	(retract ?h1 ?h2 ?h3)
+	(moveWilly north)
+	(assert(willy (x ?x) (y (+ ?y 1))))
+	(assert (moVector $?all south north))
+	(assert (movido))
+)
+
+(defrule killAlienEast
+	(declare (salience 3))
+	?h1<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise 1) (danger ?))
+	(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 1) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	(killAlien)
+	?h2<-(moVector $?all)
+	(not (deadAlien))
+	(not (movido))
+=>
+	(retract ?h1 ?h2)
+	(moveWilly east)
+	(assert(willy (x (+ ?x 1)) (y ?y)))
+	(assert (moVector $?all east))
+	(assert (moveBack))
+	(assert (movido))
+)
+
+(defrule keepSearchWest
+	(declare (salience 4))
+	?h1<-(willy (x ?x) (y ?y))
+	?h2<-(moveBack)
+	?h3<-(moVector $?all east)
+	(killAlien)
+	(not (deadAlien))
+	(not (movido))
+=>
+	(retract ?h1 ?h2 ?h3)
+	(moveWilly west)
+	(assert(willy (x (- ?x 1)) (y ?y)))
+	(assert (moVector $?all east west))
+	(assert (movido))
+)
+
+(defrule killAlienWest
+	(declare (salience 3))
+	?h1<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise 1) (danger ?))
+	(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 1) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	(killAlien)
+	?h2<-(moVector $?all)
+	(not (deadAlien))
+	(not (movido))
+=>
+	(retract ?h1 ?h2)
+	(moveWilly west)
+	(assert(willy (x (- ?x 1)) (y ?y)))
+	(assert (moVector $?all west))
+	(assert (moveBack))
+	(assert (movido))
+)
+
+(defrule keepSearchEast
+	(declare (salience 4))
+	?h1<-(willy (x ?x) (y ?y))
+	?h2<-(moveBack)
+	?h3<-(moVector $?all west)
+	(killAlien)
+	(not (deadAlien))
+	(not (movido))
+=>
+	(retract ?h1 ?h2 ?h3)
+	(moveWilly east)
+	(assert(willy (x (+ ?x 1)) (y ?y)))
+	(assert (moVector $?all west east))
+	(assert (movido))
+)
+
+
+
 ;-----------------------------------------------------------------------------
 ;Willy se movera hacia casillas seguras y no visitadas con prioridad max
 

@@ -1021,7 +1021,7 @@
 	(assert (assassin instinct vertical))
 )
 
-(defrule T-algorithm-2-north
+(defrule T-algorithm-2-north-happy-path
 	(declare (salience 7))
 	?h<-(willy (x ?x) (y ?y))
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
@@ -1039,7 +1039,24 @@
 	(assert (movido))
 )
 
-
+(defrule T-algorithm-2-north-not-happy-path
+	(declare (salience 7))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(not (casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
+	?h1<-(moVector $?all south)
+	(not (movido))
+	(not (deadAlien))
+	(assassin instinct vertical)
+	(not (abort))
+=>
+	(moveWilly east)
+	(retract ?h ?h1)
+	(assert (willy (x (+ ?x 1)) (y ?y)))
+	(assert (moVector $?all south east))
+	(assert (movido))
+	(assert (paso4))
+)
 
 ;Cuando el ultimo movimiento fue hacia el sur
 (defrule T-algorithm-1-south
@@ -1058,27 +1075,43 @@
 	(assert (moVector $?all south north))
 	(assert (movido))
 	(assert (assassin instinct vertical))
-	(assert (done1))
-	(assert (done2))
 )
 
-(defrule T-algorithm-2-south
+(defrule T-algorithm-2-south-happy-path
 	(declare (salience 7))
 	?h<-(willy (x ?x) (y ?y))
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
 	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
-	?h1<-(moVector $?all)
+	?h1<-(moVector $?all north)
 	(not (movido))
 	(not (deadAlien))
 	(assassin instinct vertical)
 	(not (abort))
-	?h2<-(done1)
 =>
 	(moveWilly west)
-	(retract ?h ?h1 ?h2)
+	(retract ?h ?h1)
 	(assert (willy (x (- ?x 1)) (y ?y)))
-	(assert (moVector $?all west))
+	(assert (moVector $?all north west))
 	(assert (movido))
+)
+
+(defrule T-algorithm-2-south-not-happy-path
+	(declare (salience 7))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(not (casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
+	?h1<-(moVector $?all north)
+	(not (movido))
+	(not (deadAlien))
+	(assassin instinct vertical)
+	(not (abort))
+=>
+	(moveWilly east)
+	(retract ?h ?h1)
+	(assert (willy (x (+ ?x 1)) (y ?y)))
+	(assert (moVector $?all north east))
+	(assert (movido))
+	(assert (paso4))
 )
 
 ;Cuando el ultimo movimiento fue hacia el oeste
@@ -1100,7 +1133,7 @@
 	(assert (assassin instinct horizontal))
 )
 
-(defrule T-algorithm-2-west
+(defrule T-algorithm-2-west-happy-path
 	(declare (salience 7))
 	?h<-(willy (x ?x) (y ?y))
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
@@ -1116,6 +1149,25 @@
 	(assert (willy (x ?x) (y (+ ?y 1))))
 	(assert (moVector $?all east north))
 	(assert (movido))
+)
+
+(defrule T-algorithm-2-west-not-happy-path
+	(declare (salience 7))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(not (casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
+	?h1<-(moVector $?all east)
+	(not (movido))
+	(not (deadAlien))
+	(assassin instinct horizontal)
+	(not (abort))
+=>
+	(moveWilly south)
+	(retract ?h ?h1)
+	(assert (willy (x ?x) (y (- ?y 1))))
+	(assert (moVector $?all east south))
+	(assert (movido))
+	(assert (paso4))
 )
 
 ;Cuando el ultimo movimiento fue hacia el este
@@ -1137,7 +1189,7 @@
 	(assert (assassin instinct horizontal))
 )
 
-(defrule T-algorithm-2-east
+(defrule T-algorithm-2-east-happy-path
 	(declare (salience 7))
 	?h<-(willy (x ?x) (y ?y))
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
@@ -1153,6 +1205,25 @@
 	(assert (willy (x ?x) (y (+ ?y 1))))
 	(assert (moVector $?all west north))
 	(assert (movido))
+)
+
+(defrule T-algorithm-2-east-not-happy-path
+	(declare (salience 7))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(not (casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
+	?h1<-(moVector $?all west)
+	(not (movido))
+	(not (deadAlien))
+	(assassin instinct horizontal)
+	(not (abort))
+=>
+	(moveWilly south)
+	(retract ?h ?h1)
+	(assert (willy (x ?x) (y (- ?y 1))))
+	(assert (moVector $?all west south))
+	(assert (movido))
+	(assert (paso4))
 )
 
 ;Movimientos verticales
@@ -1173,6 +1244,7 @@
 	(assert (willy (x ?x) (y (- ?y 1))))
 	(assert (moVector $?all north south))
 	(assert (movido))
+	(assert (paso4))
 )
 
 (defrule T-algorithm-vertical-2
@@ -1186,9 +1258,10 @@
 	(assassin instinct horizontal)
 	(not (done))
 	(not (abort))
+	?h2<-(paso4)
 =>
 	(moveWilly south)
-	(retract ?h ?h1)
+	(retract ?h ?h1 ?h2)
 	(assert (willy (x ?x) (y (- ?y 1))))
 	(assert (moVector $?all south south))
 	(assert (movido))
@@ -1221,18 +1294,18 @@
 	?h<-(willy (x ?x) (y ?y))
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
 	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
-	?h1<-(moVector $?all)
+	?h1<-(moVector $?all west)
 	(not (movido))
 	(not (deadAlien))
 	(assassin instinct vertical)
 	(not (abort))
-	?h2<-(done2)
 =>
 	(moveWilly east)
-	(retract ?h ?h1 ?h2)
+	(retract ?h ?h1)
 	(assert (willy (x (+ ?x 1)) (y ?y)))
-	(assert (moVector $?all east))
+	(assert (moVector $?all west east))
 	(assert (movido))
+	(assert (paso4))
 )
 
 (defrule T-algorithm-horizontal-2
@@ -1246,10 +1319,10 @@
 	(assassin instinct vertical)
 	(not (done))
 	(not (abort))
-	(not (done1))
+	?h2<-(paso4)
 =>
 	(moveWilly east)
-	(retract ?h ?h1)
+	(retract ?h ?h1 ?h2)
 	(assert (willy (x (+ ?x 1)) (y ?y)))
 	(assert (moVector $?all east east))
 	(assert (movido))

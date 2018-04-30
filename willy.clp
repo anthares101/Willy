@@ -272,7 +272,7 @@
 ;=====================================
 ;Se infieren con los datos obtenidos informacion de las casillas
 
-(defmodule Inferencia (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
+(defmodule Inferencia (import MAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL) (export deftemplate ?ALL))
 
 ;Willy se deberia encontrar justo a la derecha del alien
 
@@ -989,7 +989,7 @@
 ;=========================================
 ;Willy se desplaza
 
-(defmodule Movimiento (import MAIN deftemplate ?ALL) (import myMAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL))
+(defmodule Movimiento (import MAIN deftemplate ?ALL) (import myMAIN deftemplate ?ALL) (import InternalFunctions deffunction ?ALL) (import Percepcion deftemplate ?ALL) (import Inferencia deftemplate ?ALL))
 
 ;-----------------------------------------------------------------------------
 ;Inicializa el vector de movimientos
@@ -1000,152 +1000,289 @@
 	(assert (moVector))
 )
 
-(defrule killMission
-	(declare (salience 3))
-	(willy (x ?x) (y ?y))
-	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull 0) (noise 1) (danger ?))
+;Willy detecta un Noise y se activa su instinto asesino
+
+;Cuando el ultimo movimiento que hizo fue al norte
+(defrule T-algorithm-1-north
+	(declare (salience 8))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;casilla en la que se detecta Noise
+	?h1<-(moVector $?all north)
+	(not(movido))
 	(not (deadAlien))
-	(not (killAlien))
+	(not (assassin instinct vertical))
+	(not (abort))
 =>
-	(assert (killAlien))
+	(moveWilly south)
+	(retract ?h ?h1)
+	(assert (willy (x ?x) (y (- ?y 1))))
+	(assert (moVector $?all north south))
+	(assert (movido))
+	(assert (assassin instinct vertical))
 )
 
-(defrule killAlienNorth
-	(declare (salience 3))
-	?h1<-(willy (x ?x) (y ?y))
-	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise 1) (danger ?))
-	(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 1) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
-	(killAlien)
-	?h2<-(moVector $?all)
-	(not (deadAlien))
+(defrule T-algorithm-2-north
+	(declare (salience 7))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	?h1<-(moVector $?all south)
 	(not (movido))
+	(not (deadAlien))
+	(assassin instinct vertical)
+	(not (abort))
 =>
-	(retract ?h1 ?h2)
-	(moveWilly north)
-	(assert(willy (x ?x) (y (+ ?y 1))))
-	(assert (moVector $?all north))
-	(assert (moveBack))
+	(moveWilly west)
+	(retract ?h ?h1)
+	(assert (willy (x (- ?x 1)) (y ?y)))
+	(assert (moVector $?all south west))
 	(assert (movido))
 )
 
-(defrule keepSearchSouth
-	(declare (salience 4))
-	?h1<-(willy (x ?x) (y ?y))
-	?h2<-(moveBack)
-	?h3<-(moVector $?all north)
-	(killAlien)
+
+
+;Cuando el ultimo movimiento fue hacia el sur
+(defrule T-algorithm-1-south
+	(declare (salience 8))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;casilla en la que se detecta Noise
+	?h1<-(moVector $?all south)
+	(not(movido))
 	(not (deadAlien))
-	(not (movido))
+	(not (assassin instinct vertical))
+	(not (abort))
 =>
-	(retract ?h1 ?h2 ?h3)
+	(moveWilly north)
+	(retract ?h ?h1)
+	(assert (willy (x ?x) (y (+ ?y 1))))
+	(assert (moVector $?all south north))
+	(assert (movido))
+	(assert (assassin instinct vertical))
+	(assert (done1))
+	(assert (done2))
+)
+
+(defrule T-algorithm-2-south
+	(declare (salience 7))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	?h1<-(moVector $?all)
+	(not (movido))
+	(not (deadAlien))
+	(assassin instinct vertical)
+	(not (abort))
+	?h2<-(done1)
+=>
+	(moveWilly west)
+	(retract ?h ?h1 ?h2)
+	(assert (willy (x (- ?x 1)) (y ?y)))
+	(assert (moVector $?all west))
+	(assert (movido))
+)
+
+;Cuando el ultimo movimiento fue hacia el oeste
+(defrule T-algorithm-1-west
+	(declare (salience 8))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;casilla en la que se detecta Noise
+	?h1<-(moVector $?all west)
+	(not(movido))
+	(not (deadAlien))
+	(not (assassin instinct horinzontal))
+	(not (abort))
+=>
+	(moveWilly east)
+	(retract ?h ?h1)
+	(assert (willy (x (+ ?x 1)) (y ?y)))
+	(assert (moVector $?all west east))
+	(assert (movido))
+	(assert (assassin instinct horizontal))
+)
+
+(defrule T-algorithm-2-west
+	(declare (salience 7))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	?h1<-(moVector $?all east)
+	(not (movido))
+	(not (deadAlien))
+	(assassin instinct horizontal)
+	(not (abort))
+=>
+	(moveWilly north)
+	(retract ?h ?h1)
+	(assert (willy (x ?x) (y (+ ?y 1))))
+	(assert (moVector $?all east north))
+	(assert (movido))
+)
+
+;Cuando el ultimo movimiento fue hacia el este
+(defrule T-algorithm-1-east
+	(declare (salience 8))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;casilla en la que se detecta Noise
+	?h1<-(moVector $?all east)
+	(not(movido))
+	(not (deadAlien))
+	(not (assassin instinct horinzontal))
+	(not (abort))
+=>
+	(moveWilly west)
+	(retract ?h ?h1)
+	(assert (willy (x (- ?x 1)) (y ?y)))
+	(assert (moVector $?all east west))
+	(assert (movido))
+	(assert (assassin instinct horizontal))
+)
+
+(defrule T-algorithm-2-east
+	(declare (salience 7))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	?h1<-(moVector $?all west)
+	(not (movido))
+	(not (deadAlien))
+	(assassin instinct horizontal)
+	(not (abort))
+=>
+	(moveWilly north)
+	(retract ?h ?h1)
+	(assert (willy (x ?x) (y (+ ?y 1))))
+	(assert (moVector $?all west north))
+	(assert (movido))
+)
+
+;Movimientos verticales
+
+(defrule T-algorithm-vertical-1
+	(declare (salience 6))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	?h1<-(moVector $?all north)
+	(not (movido))
+	(not (deadAlien))
+	(assassin instinct horizontal)
+	(not (abort))
+=>
 	(moveWilly south)
-	(assert(willy (x ?x) (y (- ?y 1))))
+	(retract ?h ?h1)
+	(assert (willy (x ?x) (y (- ?y 1))))
 	(assert (moVector $?all north south))
 	(assert (movido))
 )
 
-(defrule killAlienSouth
-	(declare (salience 3))
-	?h1<-(willy (x ?x) (y ?y))
-	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise 1) (danger ?))
-	(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 1) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
-	(killAlien)
-	?h2<-(moVector $?all)
-	(not (deadAlien))
+(defrule T-algorithm-vertical-2
+	(declare (salience 5))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	?h1<-(moVector $?all south)
 	(not (movido))
+	(not (deadAlien))
+	(assassin instinct horizontal)
+	(not (done))
+	(not (abort))
 =>
-	(retract ?h1 ?h2)
 	(moveWilly south)
-	(assert(willy (x ?x) (y (- ?y 1))))
-	(assert (moVector $?all south))
-	(assert (moveBack))
+	(retract ?h ?h1)
+	(assert (willy (x ?x) (y (- ?y 1))))
+	(assert (moVector $?all south south))
 	(assert (movido))
+	(assert (done))
 )
 
-(defrule keepSearchNorth
+(defrule T-algorithm-vertical-3
 	(declare (salience 4))
-	?h1<-(willy (x ?x) (y ?y))
-	?h2<-(moveBack)
-	?h3<-(moVector $?all south)
-	(killAlien)
-	(not (deadAlien))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	?h1<-(moVector $?all south)
 	(not (movido))
+	(not (deadAlien))
+	(assassin instinct horizontal)
+	(done)
+	(not (abort))
 =>
-	(retract ?h1 ?h2 ?h3)
 	(moveWilly north)
-	(assert(willy (x ?x) (y (+ ?y 1))))
+	(retract ?h ?h1)
+	(assert (willy (x ?x) (y (+ ?y 1))))
 	(assert (moVector $?all south north))
 	(assert (movido))
 )
 
-(defrule killAlienEast
-	(declare (salience 3))
-	?h1<-(willy (x ?x) (y ?y))
-	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise 1) (danger ?))
-	(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 1) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
-	(killAlien)
-	?h2<-(moVector $?all)
-	(not (deadAlien))
+;Movimientos horizontales
+
+(defrule T-algorithm-horizontal-1
+	(declare (salience 6))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	?h1<-(moVector $?all)
 	(not (movido))
+	(not (deadAlien))
+	(assassin instinct vertical)
+	(not (abort))
+	?h2<-(done2)
 =>
-	(retract ?h1 ?h2)
 	(moveWilly east)
-	(assert(willy (x (+ ?x 1)) (y ?y)))
+	(retract ?h ?h1 ?h2)
+	(assert (willy (x (+ ?x 1)) (y ?y)))
 	(assert (moVector $?all east))
-	(assert (moveBack))
 	(assert (movido))
 )
 
-(defrule keepSearchWest
-	(declare (salience 4))
-	?h1<-(willy (x ?x) (y ?y))
-	?h2<-(moveBack)
-	?h3<-(moVector $?all east)
-	(killAlien)
-	(not (deadAlien))
+(defrule T-algorithm-horizontal-2
+	(declare (salience 5))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	?h1<-(moVector $?all east)
 	(not (movido))
+	(not (deadAlien))
+	(assassin instinct vertical)
+	(not (done))
+	(not (abort))
+	(not (done1))
 =>
-	(retract ?h1 ?h2 ?h3)
+	(moveWilly east)
+	(retract ?h ?h1)
+	(assert (willy (x (+ ?x 1)) (y ?y)))
+	(assert (moVector $?all east east))
+	(assert (movido))
+	(assert (done))
+)
+
+(defrule T-algorithm-horizontal-3
+	(declare (salience 4))
+	?h<-(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise ?) (danger 0))
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
+	?h1<-(moVector $?all east)
+	(not (movido))
+	(not (deadAlien))
+	(assassin instinct vertical)
+	(done)
+	(not (abort))
+=>
 	(moveWilly west)
-	(assert(willy (x (- ?x 1)) (y ?y)))
+	(retract ?h ?h1)
+	(assert (willy (x (- ?x 1)) (y ?y)))
 	(assert (moVector $?all east west))
 	(assert (movido))
 )
 
-(defrule killAlienWest
-	(declare (salience 3))
-	?h1<-(willy (x ?x) (y ?y))
-	(casilla (x ?x) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise 1) (danger ?))
-	(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 1) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))
-	(killAlien)
-	?h2<-(moVector $?all)
-	(not (deadAlien))
-	(not (movido))
+(defrule calm-down
+	(willy (x ?x) (y ?y))
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 1) (noise ?) (danger 0))
+	?h<-(assassin instinct ?)
 =>
-	(retract ?h1 ?h2)
-	(moveWilly west)
-	(assert(willy (x (- ?x 1)) (y ?y)))
-	(assert (moVector $?all west))
-	(assert (moveBack))
-	(assert (movido))
+	(retract ?h)
+	(assert (abort))
 )
-
-(defrule keepSearchEast
-	(declare (salience 4))
-	?h1<-(willy (x ?x) (y ?y))
-	?h2<-(moveBack)
-	?h3<-(moVector $?all west)
-	(killAlien)
-	(not (deadAlien))
-	(not (movido))
-=>
-	(retract ?h1 ?h2 ?h3)
-	(moveWilly east)
-	(assert(willy (x (+ ?x 1)) (y ?y)))
-	(assert (moVector $?all west east))
-	(assert (movido))
-)
-
 
 
 ;-----------------------------------------------------------------------------

@@ -746,7 +746,7 @@
 (defrule T-algorithm-1-north
 	(declare (salience 8))
 	?h<-(willy (x ?x) (y ?y))
-	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;casilla en la que se detecta Noise
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;Casilla en la que se detecta Noise
 	?h1<-(moVector $?all north)
 	(not(movido))
 	(not (deadAlien))
@@ -802,7 +802,7 @@
 (defrule T-algorithm-1-south
 	(declare (salience 8))
 	?h<-(willy (x ?x) (y ?y))
-	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;casilla en la que se detecta Noise
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;Casilla en la que se detecta Noise
 	?h1<-(moVector $?all south)
 	(not(movido))
 	(not (deadAlien))
@@ -858,7 +858,7 @@
 (defrule T-algorithm-1-west
 	(declare (salience 8))
 	?h<-(willy (x ?x) (y ?y))
-	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;casilla en la que se detecta Noise
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;Casilla en la que se detecta Noise
 	?h1<-(moVector $?all west)
 	(not(movido))
 	(not (deadAlien))
@@ -914,7 +914,7 @@
 (defrule T-algorithm-1-east
 	(declare (salience 8))
 	?h<-(willy (x ?x) (y ?y))
-	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;casilla en la que se detecta Noise
+	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull 0) (noise 1) (danger 0)) ;Casilla en la que se detecta Noise
 	?h1<-(moVector $?all east)
 	(not(movido))
 	(not (deadAlien))

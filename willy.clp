@@ -742,9 +742,13 @@
 	(assert (numMov 1))
 )
 
-;Willy detecta un Noise y se activa su instinto asesino siempre y cuando en dicha casilla no haya pull y no haya abortado anteriormente el algoritmo
+;Willy detecta un Noise y se activa su instinto asesino siempre y cuando en dicha casilla no haya Pull y no haya abortado anteriormente el algoritmo.
+;Este conjunto de reglas tratan de inferir con prioridad maxima la posicion del alien para matarlo (siempre y cuando no se ponga en peligro a Willy)
+;realizando la forma de una T que se formará en la dirección contraria a la que se llego a la casilla con el Noise, formandose completa o solo una parte
+;en función de si se encuentra o no cerca de alguna pared. El movimiento realizado en conjunto con el modulo de inferencia provoca la deteccion de la posicion
+;del alien y su consecuente ejecucion.
 
-;Cuando el ultimo movimiento que hizo fue al norte vuelve al sur
+;Cuando el ultimo movimiento que hizo fue al norte
 (defrule T-algorithm-1-north
 	(declare (salience 8))
 	?h<-(willy (x ?x) (y ?y))

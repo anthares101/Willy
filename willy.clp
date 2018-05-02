@@ -18,7 +18,7 @@
 	(slot state)
 )
 
-(defrule passToInicialRule
+(defrule passToInitialRule
 	=>
 	(assert (next_modulo Percepcion))
 	(assert (STOP (state false))))
@@ -277,44 +277,44 @@
 ;Willy se deberia encontrar justo a la derecha del alien
 
 (defrule infer-alien-right
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
-	(casilla (x =(- ?x 2))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla dos posiciones a la izquierda en la que ha estado Willy
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla en la que supuestamente se encuentra Willy
+	(casilla (x =(- ?x 2))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla dos posiciones a la izquierda en la que ha estado Willy
 	?h<-(casilla (x =(- ?x 1))(y ?y)(visited 0) (safe ?) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?))
 	=>
-	(modify ?h (safe 0) (alien 1) (danger 1)) ;la casilla del medio tiene al alien
+	(modify ?h (safe 0) (alien 1) (danger 1)) ;La casilla del medio tiene al alien
 	(assert (alien detected (- ?x 1) ?y))
 )
 
 ;Willy se deberia encontrar justo a la izquierda del alien
 
 (defrule infer-alien-left
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
-	(casilla (x =(+ ?x 2))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla dos posiciones a la derecha en la que ha estado Willy
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla en la que supuestamente se encuentra Willy
+	(casilla (x =(+ ?x 2))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla dos posiciones a la derecha en la que ha estado Willy
 	?h<-(casilla (x =(+ ?x 1))(y ?y)(visited 0) (safe ?) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?))
 	=>
-	(modify ?h (safe 0) (alien 1) (danger 1)) ;la casilla del medio tiene al alien
+	(modify ?h (safe 0) (alien 1) (danger 1)) ;La casilla del medio tiene al alien
 	(assert (alien detected (+ ?x 1) ?y))
 )
 
 ;Willy se deberia encontrar justo encima del alien
 
 (defrule infer-alien-up
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
-	(casilla (x ?x)(y =(- ?y 2))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla dos posiciones abajo en la que ha estado Willy
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla en la que supuestamente se encuentra Willy
+	(casilla (x ?x)(y =(- ?y 2))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla dos posiciones abajo en la que ha estado Willy
 	?h<-(casilla (x ?x)(y =(- ?y 1))(visited 0) (safe ?) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?))
 	=>
-	(modify ?h (safe 0) (alien 1) (danger 1)) ;la casilla del medio tiene al alien
+	(modify ?h (safe 0) (alien 1) (danger 1)) ;La casilla del medio tiene al alien
 	(assert (alien detected ?x (- ?y 2)))
 )
 
 ;Willy se deberia encontrar justo debajo del alien
 
 (defrule infer-alien-down
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla en la que supuestamente se encuentra Willy
-	(casilla (x ?x)(y =(+ ?y 2))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla dos posiciones arriba en la que ha estado Willy
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla en la que supuestamente se encuentra Willy
+	(casilla (x ?x)(y =(+ ?y 2))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla dos posiciones arriba en la que ha estado Willy
 	?h<-(casilla (x ?x)(y =(+ ?y 1))(visited 0) (safe ?) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?))
 	=>
-	(modify ?h (safe 0) (alien 1) (danger 1)) ;la casilla del medio tiene al alien
+	(modify ?h (safe 0) (alien 1) (danger 1)) ;La casilla del medio tiene al alien
 	(assert (alien detected ?x (+ ?y 1)))
 )
 
@@ -322,9 +322,9 @@
 ;Detectar al alien desde dos lados en diagonal
 
 (defrule infer-alien-up-left
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta encima del alien
-	(casilla (x =(- ?x 1))(y =(- ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta a la izquierda del alien
-	(casilla (x =(- ?x 1))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal superior izquierda del alien
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla que supuestamente esta encima del alien
+	(casilla (x =(- ?x 1))(y =(- ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla que supuestamente esta a la izquierda del alien
+	(casilla (x =(- ?x 1))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que supuestamente esta en la diagonal superior izquierda del alien
 	?h<-(casilla (x ?x)(y =(- ?y 1))(visited 0) (safe ?) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?))
 	=>
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -332,9 +332,9 @@
 )
 
 (defrule infer-alien-down-left
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta a la izquierda del alien
-	(casilla (x =(+ ?x 1))(y =(- ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta debajo del alien
-	(casilla (x ?x)(y =(- ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal inferior izquierda del alien
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla que supuestamente esta a la izquierda del alien
+	(casilla (x =(+ ?x 1))(y =(- ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla que supuestamente esta debajo del alien
+	(casilla (x ?x)(y =(- ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que supuestamente esta en la diagonal inferior izquierda del alien
 	?h<-(casilla (x =(+ ?x 1))(y ?y)(visited 0) (safe ?) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?))
 	=>
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -342,9 +342,9 @@
 )
 
 (defrule infer-alien-down-right
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta debajo del alien
-	(casilla (x =(+ ?x 1))(y =(+ ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta a la derecha del alien
-	(casilla (x =(+ ?x 1))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal inferior derecha del alien
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla que supuestamente esta debajo del alien
+	(casilla (x =(+ ?x 1))(y =(+ ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla que supuestamente esta a la derecha del alien
+	(casilla (x =(+ ?x 1))(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que supuestamente esta en la diagonal inferior derecha del alien
 	?h<-(casilla (x ?x)(y =(+ ?y 1))(visited 0) (safe ?) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?))
 	=>
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -352,9 +352,9 @@
 )
 
 (defrule infer-alien-up-right
-	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta a la derecha del alien
-	(casilla (x =(- ?x 1))(y =(+ ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;casilla que supuestamente esta encima del alien
-	(casilla (x ?x)(y =(+ ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que supuestamente esta en la diagonal superior derecha del alien
+	(casilla (x ?x)(y ?y)(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla que supuestamente esta a la derecha del alien
+	(casilla (x =(- ?x 1))(y =(+ ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0)) ;Casilla que supuestamente esta encima del alien
+	(casilla (x ?x)(y =(+ ?y 1))(visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que supuestamente esta en la diagonal superior derecha del alien
 	?h<-(casilla (x =(- ?x 1))(y ?y)(visited 0) (safe ?) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?))
 	=>
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -366,10 +366,10 @@
 
 (defrule detect-alien-1
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla encima de la referencia
-	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla debajo de la referencia
-	?h<-(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla encima de la referencia
+	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla debajo de la referencia
+	?h<-(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	=> 
 	(modify ?h (safe 0) (alien 1) (danger 1))
 	(assert (alien detected (+ ?x 1) ?y))
@@ -378,10 +378,10 @@
 ;Caso en el que la referencia esta a la derecha del peligro
 (defrule detect-alien-2
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla encima de la referencia
-	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla debajo de la referencia
-	?h<-(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla encima de la referencia
+	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla debajo de la referencia
+	?h<-(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	=> 
 	(modify ?h (safe 0) (alien 1) (danger 1))
 	(assert (alien detected (- ?x 1) ?y))
@@ -391,10 +391,10 @@
 
 (defrule detect-alien-3
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla a la derecha de la referencia
-	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla a la izquierda de la referencia
-	?h<-(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla a la derecha de la referencia
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla a la izquierda de la referencia
+	?h<-(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	=> 
 	(modify ?h (safe 0) (alien 1) (danger 1))
 	(assert (alien detected ?x (+ ?y 1)))
@@ -404,22 +404,23 @@
 
 (defrule detect-alien-4
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla a la derecha de la referencia
-	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla a la izquierda de la referencia
-	?h<-(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla a la derecha de la referencia
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla a la izquierda de la referencia
+	?h<-(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	=> 
 	(modify ?h (safe 0) (alien 1) (danger 1))
 	(assert (alien detected ?x (- ?y 1)))
 )
 
+;-----------------------------------------------------------------------------
 ;Caso en el que el peligro esta en la pared izquierda y la referencia esta encima del peligro
 
 (defrule detect-alien-5
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla a la derecha de la referencia
-	?h<-(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla a la derecha de la referencia
+	?h<-(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=>
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -430,9 +431,9 @@
 
 (defrule detect-alien-6
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla a la derecha de la referencia
-	?h<-(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla a la derecha de la referencia
+	?h<-(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=> 
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -443,9 +444,9 @@
 
 (defrule detect-alien-7
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla a la izquierda de la referencia
-	?h<-(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla a la izquierda de la referencia
+	?h<-(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=>
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -456,9 +457,9 @@
 
 (defrule detect-alien-8
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla a la izquierda de la referencia
-	?h<-(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla a la izquierda de la referencia
+	?h<-(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=> 
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -469,9 +470,9 @@
 
 (defrule detect-alien-9
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla debajo de la referencia
-	?h<-(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla debajo de la referencia
+	?h<-(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=> 
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -482,9 +483,9 @@
 
 (defrule detect-alien-10
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla debajo de la referencia
-	?h<-(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla debajo de la referencia
+	?h<-(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=> 
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -495,9 +496,9 @@
 
 (defrule detect-alien-11
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla encima de la referencia
-	?h<-(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla encima de la referencia
+	?h<-(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=> 
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -508,9 +509,9 @@
 
 (defrule detect-alien-12
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla opuesta al peligro
-	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ; casilla encima de la referencia
-	?h<-(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ; casilla del peligro
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla opuesta al peligro
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla encima de la referencia
+	?h<-(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=> 
 	(modify ?h (safe 0) (alien 1) (danger 1))
@@ -520,10 +521,10 @@
 ;-----------------------------------------------------------------------------
 ;Caso en el que el noise se detecta en la esquina superior izquierda y la de debajo es safe
 
-(defrule detect-alien-21
+(defrule detect-alien-13
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que no es la del peligro
-	?h<-(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;casilla del peligro
+	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que no es la del peligro
+	?h<-(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	(not (casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=>
@@ -533,10 +534,10 @@
 
 ;Caso en el que el noise se detecta en la esquina superior izquierda y la de la derecha es safe
 
-(defrule detect-alien-22
+(defrule detect-alien-14
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que no es la del peligro
-	?h<-(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;casilla del peligro
+	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que no es la del peligro
+	?h<-(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	(not (casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=>
@@ -546,10 +547,10 @@
 
 ;Caso en el que el noise se detecta en la esquina superior derecha y la de debajo es safe
 
-(defrule detect-alien-23
+(defrule detect-alien-15
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que no es la del peligro
-	?h<-(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;casilla del peligro
+	(casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que no es la del peligro
+	?h<-(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	(not (casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=>
@@ -559,10 +560,10 @@
 
 ;Caso en el que el noise se detecta en la esquina superior derecha y la de debajo es safe
 
-(defrule detect-alien-24
+(defrule detect-alien-16
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que no es la del peligro
-	?h<-(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;casilla del peligro
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que no es la del peligro
+	?h<-(casilla (x ?x) (y =(- ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	(not (casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=>
@@ -572,10 +573,10 @@
 
 ;Caso en el que el noise se detecta en la esquina inferior izquierda y la de arriba es safe
 
-(defrule detect-alien-25
+(defrule detect-alien-17
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que no es la del peligro
-	?h<-(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;casilla del peligro
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que no es la del peligro
+	?h<-(casilla (x =(+ ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	(not (casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=>
@@ -585,10 +586,10 @@
 
 ;Caso en el que el noise se detecta en la esquina inferior izquierda y la de la derecha es safe
 
-(defrule detect-alien-26
+(defrule detect-alien-18
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que no es la del peligro
-	?h<-(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;casilla del peligro
+	(casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que no es la del peligro
+	?h<-(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	(not (casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=>
@@ -598,10 +599,10 @@
 
 ;Caso en el que el noise se detecta en la esquina inferior derecha y la de arriba es safe
 
-(defrule detect-alien-27
+(defrule detect-alien-19
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que no es la del peligro
-	?h<-(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;casilla del peligro
+	(casilla (x ?x) (y =(+ ?y 1)) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que no es la del peligro
+	?h<-(casilla (x =(- ?x 1)) (y ?y) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	(not (casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=>
@@ -610,10 +611,10 @@
 )
 
 ;Caso en el que el noise se detecta en la esquina inferior derecha y la de la izquierda es safe
-(defrule detect-alien-28
+(defrule detect-alien-20
 	(casilla (x ?x) (y ?y) (visited 1) (safe 1) (alien 0) (hole 0) (pull ?) (noise 1) (danger 0))
-	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;casilla que no es la del peligro
-	?h<-(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;casilla del peligro
+	(casilla (x =(- ?x 1)) (y ?y) (visited ?) (safe 1) (alien 0) (hole 0) (pull ?) (noise 0) (danger 0)) ;Casilla que no es la del peligro
+	?h<-(casilla (x ?x) (y =(+ ?y 1)) (visited 0) (safe 0) (alien 0) (hole ?) (pull ?) (noise ?) (danger ?)) ;Casilla del peligro
 	(not (casilla (x =(+ ?x 1)) (y ?y) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	(not (casilla (x ?x) (y =(- ?y 1)) (visited ?) (safe ?) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?)))
 	=>

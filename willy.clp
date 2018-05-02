@@ -736,13 +736,15 @@
 
 (defrule init
 	(not (moVector $?))
+	(not (numMov ?))
 =>
 	(assert (moVector))
+	(assert (numMov 1))
 )
 
-;Willy detecta un Noise y se activa su instinto asesino
+;Willy detecta un Noise y se activa su instinto asesino siempre y cuando en dicha casilla no haya pull y no haya abortado anteriormente el algoritmo
 
-;Cuando el ultimo movimiento que hizo fue al norte
+;Cuando el ultimo movimiento que hizo fue al norte vuelve al sur
 (defrule T-algorithm-1-north
 	(declare (salience 8))
 	?h<-(willy (x ?x) (y ?y))
@@ -1162,7 +1164,7 @@
 )
 
 ;-----------------------------------------------------------------------------
-;Willy se movera hacia atras por donde a venido si no sabe por donde avanzar
+;Willy se movera hacia atras por donde ha venido si no sabe por donde avanzar
 
 (defrule moveBackSouth
 	?h1<-(willy (x ?x) (y ?y))
@@ -1217,12 +1219,12 @@
 )
 
 ;-----------------------------------------------------------------------------
-;Si no hay mas casillas seguros o no visitadas disponibles se activa la señal de parada
+;Si no hay mas casillas seguras o no visitadas disponibles se activa la señal de parada, tambien si no se ha podido mover o bien para no morir a los 1000 movimientos
 
 (defrule stop
 	(declare(salience -9))
 	?h<-(STOP (state false))
-	(or (not(movido)) (not(casilla (x ?) (y ?) (visited 0) (safe 1) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))))
+	(or (not(movido)) (not(casilla (x ?) (y ?) (visited 0) (safe 1) (alien ?) (hole ?) (pull ?) (noise ?) (danger ?))) (numMov 998))
 =>
 	(retract ?h)
 	(assert (STOP (state true)))
@@ -1233,8 +1235,10 @@
 
 (defrule exitModule
 	(declare(salience -10))
-	?h1<-(movido)
+	?h1<-(numMov ?num)
+	?h2<-(movido)
 =>
-	(retract ?h1)
+	(retract ?h1 ?h2)
+	(assert (numMov (+ ?num 1)))
 	(return)
 )

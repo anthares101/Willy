@@ -1,9 +1,8 @@
 # Distribución de "Willy en el espacio" 
 
-Prácticas de Sistemas Inteligentes (Grado en Ingeniería Informática, UCO)
-Por: Carlos García Martínez, Manuel Jesús Marín Jiménez y Amelia Zafra Gómez 
-======================================
-Realizadas por: Ángel Heredia Pérez y Sergio Gómez Morales
+## Prácticas de Sistemas Inteligentes (Grado en Ingeniería Informática, UCO)
+### Por: Carlos García Martínez, Manuel Jesús Marín Jiménez y Amelia Zafra Gómez
+### Realizadas por: Ángel Heredia Pérez y Sergio Gómez Morales
 
 Willy es un astronauta que se encuentra perdido en el espacio, y quiere llegar a la Tierra. Para
 ello deberá ir recorriendo el espacio a su alrededor hasta encontrarla, pero una serie de peligros
@@ -27,8 +26,8 @@ no detecta peligros, si detecta que cerca hay un Agujero negro, volverá hacia a
 toda costa, y si detecta un Alien, se moverá de forma que pueda detectar su posición exacta para
 luego dispararle.
 
-Ejecucion:
-======================================
+# Ejecucion:
+
 -Copia el contenido del directorio correspondiente a tu sistema operativo en el mismo directorio donde se encuentre el fichero "WillyDemo.jar"
 -Escribir en el terminal: java -Djava.library.path=. -jar WillyDemo.jar
 -Para cargar los mapas de validacion se le añadirá la flag: -maps maps_validation 

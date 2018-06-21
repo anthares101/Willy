@@ -28,8 +28,13 @@ luego dispararle.
 
 # Ejecucion:
 
--Copia el contenido del directorio correspondiente a tu sistema operativo en el mismo directorio donde se encuentre el fichero "WillyDemo.jar"
+-Copia el contenido del directorio correspondiente a tu sistema operativo en el mismo directorio donde se encuentre el fichero
+"WillyDemo.jar"
+
 -Escribir en el terminal: java -Djava.library.path=. -jar WillyDemo.jar
--Para cargar los mapas de validacion se le añadirá la flag: -maps maps_validation 
+
+-Para cargar los mapas de validacion se le añadirá la flag: -maps maps_validation
+
 -Para que el usuario sea el que juegue: -interactive
+
 -Si se pulsa "All maps" se empezará a resolver todos los mapas del directorio "maps"
